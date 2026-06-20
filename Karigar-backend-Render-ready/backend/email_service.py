@@ -197,12 +197,26 @@ def send_profile_email(worker: dict, referred_by: dict | None = None) -> bool:
         attachment.add_header("Content-Disposition", "attachment", filename=f"Karigar_{safe or 'Profile'}.pdf")
         msg.attach(attachment)
 
-        context = ssl.create_default_context()
-with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context, timeout=30) as server:
-    server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
-    server.sendmail(GMAIL_ADDRESS, [RECIPIENT], msg.as_string())
-        logger.info("Profile email sent for worker %s to %s", worker.get("id"), RECIPIENT)
+               context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(
+            "smtp.gmail.com",
+            465,
+            context=context,
+            timeout=30,
+        ) as server:
+            server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            server.sendmail(GMAIL_ADDRESS, [RECIPIENT], msg.as_string())
+
+        logger.info(
+            "Profile email sent for worker %s to %s",
+            worker.get("id"),
+            RECIPIENT,
+        )
         return True
     except Exception as e:
-        logger.error("Failed to send profile email for %s: %s", worker.get("id"), e)
+        logger.error(
+            "Failed to send profile email for %s: %s",
+            worker.get("id"),
+            e,
+        )
         return False
