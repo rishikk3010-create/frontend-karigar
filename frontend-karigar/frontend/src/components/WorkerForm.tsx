@@ -19,14 +19,13 @@ import { AppText, Button, Chip, Field } from "@/src/components/ui";
 import { Calendar } from "@/src/components/Calendar";
 import { GENDERS, SPOKEN_LANGUAGES, AVAILABILITY_OPTIONS, PROOF_TYPES } from "@/src/constants/app";
 import { SKILL_CATEGORIES } from "@/src/constants/skills";
-import { availabilityColor, calcAge, formatDate, Worker } from "@/src/utils/profile";
+import { availabilityColor, formatDate, Worker } from "@/src/utils/profile";
 import { useToast } from "@/src/components/Toast";
 import { apiFetch } from "@/src/api/client";
 
 export interface WorkerFormValues {
   mobile?: string;
   full_name: string;
-  dob: string;
   gender: string;
   languages: string[];
   area: string;
@@ -52,7 +51,6 @@ export function emptyValues(): WorkerFormValues {
   return {
     mobile: "",
     full_name: "",
-    dob: "",
     gender: "",
     languages: [],
     area: "",
@@ -78,7 +76,6 @@ export function emptyValues(): WorkerFormValues {
 export function fromWorker(w: Worker): WorkerFormValues {
   return {
     full_name: w.full_name,
-    dob: w.dob,
     gender: w.gender,
     languages: w.languages || [],
     area: w.area,
@@ -104,7 +101,6 @@ export function fromWorker(w: Worker): WorkerFormValues {
 export function toPayload(v: WorkerFormValues) {
   return {
     full_name: v.full_name.trim(),
-    dob: v.dob,
     gender: v.gender,
     languages: v.languages,
     area: v.area.trim(),
@@ -194,7 +190,6 @@ export default function WorkerForm({
   const [gpsFilledArea, setGpsFilledArea] = useState<string | null>(null);
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const [proofOpen, setProofOpen] = useState(false);
-  const [dobOpen, setDobOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const set = (k: keyof WorkerFormValues, val: any) => setV((p) => ({ ...p, [k]: val }));
@@ -284,7 +279,6 @@ export default function WorkerForm({
     const e: Record<string, string> = {};
     if (showMobile && (!v.mobile || v.mobile.trim().length < 10)) e.mobile = t("enterMobile");
     if (!v.full_name.trim()) e.full_name = t("nameRequired");
-    if (!v.dob || calcAge(v.dob) < 18) e.dob = t("min18");
     if (!v.gender) e.gender = t("required");
     if (v.languages.length === 0) e.languages = t("pickAtLeastOneLang");
     if (!v.area.trim()) e.area = t("required");
@@ -343,45 +337,6 @@ export default function WorkerForm({
           testID="form-name"
         />
 
-        {/* DOB */}
-        <View style={{ marginBottom: SPACING.lg }}>
-          <AppText weight="semibold" style={{ marginBottom: SPACING.xs }}>
-            {t("dob")}
-          </AppText>
-          <Pressable
-            onPress={() => setDobOpen((o) => !o)}
-            style={[inputStyle, styles.dobField, errors.dob && { borderColor: COLORS.error }]}
-            testID="form-dob"
-          >
-            <AppText color={v.dob ? COLORS.onSurface : COLORS.muted}>
-              {v.dob ? formatDate(v.dob) : t("selectDate")}
-            </AppText>
-            <Ionicons name="calendar-outline" size={20} color={COLORS.muted} />
-          </Pressable>
-          {!!v.dob && calcAge(v.dob) >= 18 && (
-            <AppText size="sm" color={COLORS.muted} style={{ marginTop: 4 }}>
-              {t("ageLabel")}: {calcAge(v.dob)}
-            </AppText>
-          )}
-          {errors.dob && (
-            <AppText size="sm" color={COLORS.error} style={{ marginTop: 4 }}>
-              {errors.dob}
-            </AppText>
-          )}
-          {dobOpen && (
-            <View style={{ marginTop: SPACING.sm }}>
-              <Calendar
-                mode="past"
-                value={v.dob || null}
-                onSelect={(iso) => {
-                  set("dob", iso);
-                  setDobOpen(false);
-                }}
-                testID="dob-calendar"
-              />
-            </View>
-          )}
-        </View>
 
         {/* Gender */}
         <AppText weight="semibold" style={{ marginBottom: SPACING.sm }}>
@@ -647,7 +602,7 @@ const inputStyle = {
 
 const styles = StyleSheet.create({
   row: { flexDirection: "row", gap: SPACING.sm },
-  dobField: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  
   wrap: { flexDirection: "row", flexWrap: "wrap", gap: SPACING.sm },
   catWrap: { borderWidth: 1, borderColor: COLORS.border, borderRadius: RADIUS.md, backgroundColor: COLORS.surfaceSecondary, overflow: "hidden" },
   catHeader: { flexDirection: "row", alignItems: "center", gap: SPACING.md, paddingHorizontal: SPACING.lg, minHeight: 56 },

@@ -2,7 +2,7 @@ import { COLORS } from "@/src/theme";
 
 export interface ProfileVersion {
   full_name: string;
-  dob: string;
+  dob?: string;
   gender: string;
   languages: string[];
   area: string;
@@ -29,7 +29,7 @@ export interface Worker {
   id: string;
   phone: string;
   full_name: string;
-  dob: string;
+  dob?: string;
   gender: string;
   languages: string[];
   area: string;
@@ -60,7 +60,6 @@ export interface Worker {
 
 const COMPLETION_FIELDS: (keyof Worker)[] = [
   "full_name",
-  "dob",
   "gender",
   "languages",
   "area",

@@ -106,7 +106,6 @@ class CreateAdminPayload(BaseModel):
 
 class WorkerProfilePayload(BaseModel):
     full_name: str
-    dob: str
     gender: str
     languages: List[str]
     area: str
@@ -393,7 +392,6 @@ async def _build_worker_doc(payload: WorkerProfilePayload, phone: str, user_id: 
         "phone": phone,
         "user_id": user_id,
         "full_name": payload.full_name.strip(),
-        "dob": payload.dob,
         "gender": payload.gender,
         "languages": payload.languages,
         "area": payload.area.strip(),
@@ -430,7 +428,7 @@ async def _build_worker_doc(payload: WorkerProfilePayload, phone: str, user_id: 
 
 # Fields captured in a version snapshot when a profile is edited.
 _SNAPSHOT_FIELDS = [
-    "full_name", "dob", "gender", "languages", "area", "city",
+    "full_name", "gender", "languages", "area", "city",
     "location_lat", "location_lng", "skills",
     "years_experience", "current_employer", "previous_employer", "wage_expectation",
     "upi_id", "portfolio_images", "aadhar_images", "employment_proof_type",
@@ -451,7 +449,6 @@ def _make_snapshot(worker: dict, edited_by: str) -> dict:
 def _profile_update_fields(payload: WorkerProfilePayload, worker: dict) -> dict:
     return {
         "full_name": payload.full_name.strip(),
-        "dob": payload.dob,
         "gender": payload.gender,
         "languages": payload.languages,
         "area": payload.area.strip(),

@@ -130,7 +130,6 @@ def generate_profile_pdf(worker: dict, referred_by: dict | None = None) -> bytes
     details = [
         kv("Full Name", worker.get("full_name")),
         kv("Phone", f"+91 {worker.get('phone', '')}"),
-        kv("Date of Birth", worker.get("dob")),
         kv("Gender", (worker.get("gender") or "").title()),
         kv("Area / City", f"{worker.get('area', '')}, {worker.get('city', '')}"),
         kv("Experience", f"{worker.get('years_experience', 0)} years"),

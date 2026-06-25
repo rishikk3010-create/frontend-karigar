@@ -74,7 +74,7 @@ export default function ArtisanProfile() {
         )}
 
         <Card style={styles.card}>
-          <Row label={t("dob")} value={`${worker.dob} (${calcAge(worker.dob)} ${t("yearsShort")})`} />
+          {worker.dob ? <Row label={t("dob")} value={`${worker.dob} (${calcAge(worker.dob)} ${t("yearsShort")})`} /> : null}
           <Row label={t("gender")} value={t(worker.gender)} />
           <Row label={t("experience")} value={`${worker.years_experience} ${t("yearsShort")}`} />
           {worker.wage_expectation ? <Row label={t("wage")} value={`₹${worker.wage_expectation} ${t("perMonth")}`} /> : null}

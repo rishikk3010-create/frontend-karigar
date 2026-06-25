@@ -51,7 +51,7 @@ export default function WorkerDetail({ worker, contentBottom = 40 }: { worker: W
       )}
 
       <Card style={styles.card}>
-        <Row label={t("dob")} value={`${worker.dob} (${calcAge(worker.dob)} ${t("yearsShort")})`} />
+        {worker.dob ? <Row label={t("dob")} value={`${worker.dob} (${calcAge(worker.dob)} ${t("yearsShort")})`} /> : null}
         <Row label={t("gender")} value={t(worker.gender)} />
         <Row label={t("area")} value={`${worker.area}, ${worker.city}`} />
         <Row label={t("experience")} value={`${worker.years_experience} ${t("yearsShort")}`} />

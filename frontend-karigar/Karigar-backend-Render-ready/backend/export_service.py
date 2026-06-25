@@ -36,7 +36,6 @@ TEXT_COLUMNS = [
     ("Worker ID", "id"),
     ("Name", "full_name"),
     ("Mobile", "phone"),
-    ("DOB", "dob"),
     ("Gender", "gender"),
     ("Languages", None),  # joined list, handled specially
     ("Skills", None),
