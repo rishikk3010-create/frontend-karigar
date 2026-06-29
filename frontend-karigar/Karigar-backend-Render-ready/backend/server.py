@@ -200,8 +200,10 @@ async def worker_for_user(user: dict) -> Optional[dict]:
 # ---------------------------------------------------------------------------
 def _validate_phone(phone: str) -> str:
     phone = phone.strip()
-    if len(phone) < 10 or not phone.isdigit():
+    if len(phone) != 10 or not phone.isdigit():
         raise HTTPException(status_code=400, detail="Enter a valid 10-digit mobile number")
+    if phone[0] not in ("6", "7", "8", "9"):
+        raise HTTPException(status_code=400, detail="Mobile number must start with 6, 7, 8 or 9")
     return phone
 
 
