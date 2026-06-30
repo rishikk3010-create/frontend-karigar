@@ -22,9 +22,31 @@ const COMMON_WEAK_PASSWORDS = [
   "123123", "letmein", "admin123", "password1", "12345678",
 ];
 
+const isSequential = (pwd: string): boolean => {
+  let ascending = true;
+  let descending = true;
+  for (let i = 0; i < pwd.length - 1; i++) {
+    const curr = pwd.charCodeAt(i);
+    const next = pwd.charCodeAt(i + 1);
+    if (next !== curr + 1) ascending = false;
+    if (next !== curr - 1) descending = false;
+  }
+  return ascending || descending;
+};
+
+const isAllSameCharacter = (pwd: string): boolean => {
+  return pwd.split("").every((ch) => ch === pwd[0]);
+};
+
 const isValidPassword = (pwd: string): { valid: boolean; message: string } => {
   if (pwd.length < 6) {
     return { valid: false, message: "Password must be at least 6 characters" };
+  }
+  if (isAllSameCharacter(pwd)) {
+    return { valid: false, message: "Password cannot be the same character repeated. Please choose a different one" };
+  }
+  if (isSequential(pwd)) {
+    return { valid: false, message: "Password cannot be a simple sequence like 123456. Please choose a different one" };
   }
   if (COMMON_WEAK_PASSWORDS.includes(pwd.toLowerCase())) {
     return { valid: false, message: "This password is too easy to guess. Please choose a different one" };
