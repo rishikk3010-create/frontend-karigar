@@ -17,6 +17,21 @@ import { AppText, Button } from "@/src/components/ui";
 import { useAuth } from "@/src/context/AuthContext";
 import { useToast } from "@/src/components/Toast";
 
+const COMMON_WEAK_PASSWORDS = [
+  "123456", "password", "abc123", "qwerty", "111111",
+  "123123", "letmein", "admin123", "password1", "12345678",
+];
+
+const isValidPassword = (pwd: string): { valid: boolean; message: string } => {
+  if (pwd.length < 6) {
+    return { valid: false, message: "Password must be at least 6 characters" };
+  }
+  if (COMMON_WEAK_PASSWORDS.includes(pwd.toLowerCase())) {
+    return { valid: false, message: "This password is too easy to guess. Please choose a different one" };
+  }
+  return { valid: true, message: "" };
+};
+
 export default function LoginScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -37,21 +52,37 @@ export default function LoginScreen() {
     }
   };
 
- const handleSubmit = async () => {
-    if (phone.trim().length !== 10 || !/^[6-9]\d{9}$/.test(phone.trim())) {
-      show(t("enterMobile"), "error");
+  const handlePhoneChange = (text: string) => {
+    const digitsOnly = text.replace(/[^0-9]/g, "");
+    setPhone(digitsOnly);
+
+    // Check the first digit as soon as it's typed
+    if (digitsOnly.length === 1 && !/^[6-9]$/.test(digitsOnly)) {
+      show("Mobile number must start with 6, 7, 8, or 9", "error");
+    }
+  };
+
+  const handleSubmit = async () => {
+    const trimmedPhone = phone.trim();
+    if (trimmedPhone.length !== 10) {
+      show("Please enter a 10-digit mobile number", "error");
       return;
     }
-    if (password.length < 6) {
-      show(t("passwordMin6"), "error");
+    if (!/^[6-9]/.test(trimmedPhone)) {
+      show("Mobile number must start with 6, 7, 8, or 9", "error");
+      return;
+    }
+    const pwdCheck = isValidPassword(password);
+    if (!pwdCheck.valid) {
+      show(pwdCheck.message, "error");
       return;
     }
     setLoading(true);
     try {
       const u =
         mode === "login"
-          ? await login(phone.trim(), password)
-          : await register(phone.trim(), password, "karigar");
+          ? await login(trimmedPhone, password)
+          : await register(trimmedPhone, password, "karigar");
       routeUser(u);
     } catch (e: any) {
       show(e.message || t("genericError"), "error");
@@ -88,7 +119,7 @@ export default function LoginScreen() {
           <TextInput
             testID="phone-input"
             value={phone}
-            onChangeText={(x) => setPhone(x.replace(/[^0-9]/g, ""))}
+            onChangeText={handlePhoneChange}
             placeholder={t("enterMobile")}
             placeholderTextColor={COLORS.muted}
             keyboardType="phone-pad"
